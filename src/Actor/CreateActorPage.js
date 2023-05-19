@@ -1,95 +1,195 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { addActorRequest } from './actorsSlice';
-import { useNavigate } from 'react-router-dom';
-import { makeStyles } from '@mui/styles';
+import { makeStyles, ThemeProvider } from '@mui/styles';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { createTheme, Snackbar, SnackbarContent } from '@mui/material';
 
-const useStyles = makeStyles(theme => ({
+const theme = createTheme();
+const useStyles = makeStyles({
   root: {
-    margin: '20px',
-  },
-  header: {
-    marginBottom: '20px',
-  },
-  form: {
+    backgroundColor: '#F7EAEA', // Light pinkish red
+    minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: '400px',
-    margin: '0 auto',
+    alignItems: 'center',
+    padding: '16px', // Adjust the spacing as desired
   },
-  input: {
-    marginBottom: '20px',
+  header: {
+    color: '#6A0D2F', // Deep red
+    marginBottom: '24px', // Adjust the spacing as desired
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  formContainer: {
+    backgroundColor: '#F7EAEA', // Same as page background
+    padding: '30px',
+  },
+  formField: {
+    marginBottom: '16px',
+  },
+  buttonContainer: {
+    marginTop: '16px'
   },
   submitButton: {
-    marginBottom: '20px',
+    color: '#FFFFFF', // White
+    backgroundColor: '#A40E4C', // Deep wine
+    marginBottom: '16px', // Adjust the spacing as desired
+    '&:hover': {
+      backgroundColor: '#790B38', // Darker wine
+    },
+    '&.MuiButton-contained': {
+      color: '#FFFFFF', // White
+      backgroundColor: '#A40E4C', // Deep wine
+      '&:hover': {
+        backgroundColor: '#790B38', // Darker wine
+      },
+    },
   },
-}));
+  backButton: {
+    color: '#E84D76', // Lighter shade of wine
+    marginBottom: '16px',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+    '&.MuiButton-contained': {
+      color: '#FFFFFF', // White
+      backgroundColor: '#A40E4C', // Deep wine
+      '&:hover': {
+        backgroundColor: '#790B38', // Darker wine
+      },
+    },
+  },
+});
 
+// Define the component
 const CreateActorPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [age, setAge] = useState('');
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
 
-  const handleCreateActor = async (event) => {
-    event.preventDefault();
-
-    const actorData = {
+  const handleSubmit = e => {
+    e.preventDefault();
+    const actor = {
       firstName,
       lastName,
-      age,
+      age: parseInt(age),
     };
 
-    try {
-      await dispatch(addActorRequest(actorData));
-      navigate('/');
-    } catch (error) {
-      console.error('Error creating actor:', error);
-    }
+    dispatch(addActorRequest(actor))
+    .then(() => {
+      setFirstName('');
+      setLastName('');
+      setAge('');
+      setSuccessOpen(true);
+    })
+    .catch(() => {
+      setErrorOpen(true);
+    });
+
+    setFirstName('');
+    setLastName('');
+    setAge('');
+  };
+
+  const handleSuccessClose = () => {
+    setSuccessOpen(false);
+  };
+
+  const handleErrorClose = () => {
+    setErrorOpen(false);
   };
 
   return (
-    <div className={classes.root}>
-      <Typography variant="h1" className={classes.header}>
-        Create Actor Page
-      </Typography>
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <Container maxWidth="sm">
+          <Typography variant="h4" className={classes.header}>
+            Create Actor
+          </Typography>
 
-      <Button onClick={() => navigate('/')}>Back</Button>
+          <Box textAlign="center" marginBottom="16px" className={classes.buttonContainer}>
+            <Button
+              variant="contained"
+              className={classes.backButton}
+              onClick={() => window.history.back()}
+            >
+              Back
+            </Button>
+          </Box>
 
-      <form className={classes.form} onSubmit={handleCreateActor}>
-        <TextField
-          label="First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          className={classes.input}
-          required
-        />
-        <TextField
-          label="Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          className={classes.input}
-          required
-        />
-        <TextField
-          label="Age"
-          type="number"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          className={classes.input}
-          required
-        />
+          <form onSubmit={handleSubmit} className={classes.formContainer}>
+            <TextField
+              label="First Name"
+              variant="outlined"
+              className={classes.formField}
+              fullWidth
+              margin="dense"
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+            />
+            <TextField
+              label="Last Name"
+              variant="outlined"
+              className={classes.formField}
+              fullWidth
+              margin="dense"
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
+            />
+            <TextField
+              label="Age"
+              type="number"
+              variant="outlined"
+              className={classes.formField}
+              fullWidth
+              margin="dense"
+              value={age}
+              onChange={e => setAge(e.target.value)}
+            />
+            <Box textAlign="center" className={classes.buttonContainer}>
+              <Button
+                type="submit"
+                variant="contained"
+                className={classes.submitButton}
+              >
+                Create
+              </Button>
+            </Box>
+          </form>
+        </Container>
+        <Snackbar
+          open={successOpen}
+          autoHideDuration={3000}
+          onClose={handleSuccessClose}
+        >
+          <SnackbarContent
+            message="Actor created successfully!"
+            style={{ backgroundColor: '#00C853' }} // Green color
+          />
+        </Snackbar>
 
-        <Button type="submit" variant="contained" className={classes.submitButton}>
-          Create Actor
-        </Button>
-      </form>
-    </div>
+        {/* Error Alert */}
+        <Snackbar
+          open={errorOpen}
+          autoHideDuration={3000}
+          onClose={handleErrorClose}
+        >
+          <SnackbarContent
+            message="Failed to create actor!"
+            style={{ backgroundColor: '#D50000' }} // Red color
+          />
+        </Snackbar>
+      </div>
+    </ThemeProvider>
   );
 };
 

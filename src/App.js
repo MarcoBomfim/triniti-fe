@@ -4,7 +4,7 @@ import { fetchActorsRequest, setActors } from './Actor/actorsSlice';
 import { fetchMoviesRequest } from './Movie/moviesSlice';
 import { setMovies } from './Movie/moviesSlice';
 import { Link, useNavigate } from 'react-router-dom';
-import { makeStyles, ThemeProvider, styled } from '@mui/styles';
+import { makeStyles, ThemeProvider } from '@mui/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -47,6 +47,17 @@ const useStyles = makeStyles({
   card: {
     backgroundColor: '#FFFFFF', // White
     marginBottom: '16px', // Adjust the spacing as desired
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    height: '100%', // Set the height to occupy the available space
+  },
+  cardContent: {
+    flexGrow: 1, // Allow the content to grow and fill the available space
+  },
+  buttonContainer: {
+    marginTop: '16px',
+    textAlign: 'center', // Center the button
   },
 });
 
@@ -82,9 +93,12 @@ const App = () => {
           Actors List
         </Typography>
 
-        <Button variant="contained" className={classes.button} onClick={() => navigate('/new-actor')}>
-          New Actor
-        </Button>
+        <div className={classes.buttonContainer}>
+            <Button variant="contained" className={classes.button} onClick={() => navigate('/new-actor')}>
+              New Actor
+            </Button>
+        </div>
+
         <Grid container spacing={2} mt={4}>
           {actors.map(actor => (
             <Grid item xs={12} sm={6} md={4} key={actor.id}>
