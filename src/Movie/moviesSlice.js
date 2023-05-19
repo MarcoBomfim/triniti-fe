@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
 import { nanoid } from "nanoid";
 
-const API_BASE_URL = 'http://localhost:3001';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const fetchMoviesRequest = createAsyncThunk('movies/fetchMovies', async () => {
   try {
