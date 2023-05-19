@@ -17,7 +17,6 @@ export const fetchMoviesRequest = createAsyncThunk('movies/fetchMovies', async (
 export const addMovieRequest = createAsyncThunk('movies/createMovie', async (payload) => {
   try {
     const { actorId, movie } = payload;
-    console.log(actorId, payload)
     const response = await axios.post(`${API_BASE_URL}/actors/${actorId}/movies`, movie);
     return response.data;
   } catch (error) {

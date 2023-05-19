@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch, connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { fetchActorsRequest, setActors } from './Actor/actorsSlice';
 import { fetchMoviesRequest } from './Movie/moviesSlice';
 import { setMovies } from './Movie/moviesSlice';
@@ -121,12 +121,4 @@ const App = () => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    actors: state.actors,
-    movies: state.movies
-  }
-}
-
-
-export default connect(mapStateToProps)(App);
+export default App;
